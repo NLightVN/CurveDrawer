@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CurveDrawer - Interactive Drawing Tool</title>
+    <meta name="description" content="A modern web-based drawing application for creating lines, curves, and shapes">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <path d="M4 28 Q 8 8, 16 16 T 28 28" stroke="url(#gradient)" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <circle cx="4" cy="28" r="2" fill="var(--accent-primary)"/>
+                    <circle cx="16" cy="16" r="2" fill="var(--accent-secondary)"/>
+                    <circle cx="28" cy="28" r="2" fill="var(--accent-tertiary)"/>
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="var(--accent-primary)" />
+                            <stop offset="50%" stop-color="var(--accent-secondary)" />
+                            <stop offset="100%" stop-color="var(--accent-tertiary)" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h1>CurveDrawer</h1>
+            </div>
+            <div class="header-actions">
+                <button id="clearBtn" class="btn-secondary" title="Clear Canvas">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                    </svg>
+                    Clear
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Toolbar -->
+            <aside class="toolbar">
+                <h2 class="toolbar-title">Tools</h2>
+                <div class="tool-group">
+                    <button class="tool-btn active" data-tool="straightLine" title="Straight Line">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="4" y1="20" x2="20" y2="4" stroke-linecap="round"/>
+                            <circle cx="4" cy="20" r="2" fill="currentColor"/>
+                            <circle cx="20" cy="4" r="2" fill="currentColor"/>
+                        </svg>
+                        <span>Straight Line</span>
+                    </button>
+                    
+                    <button class="tool-btn" data-tool="interpolatedCurve" title="Interpolated Curve">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 20 Q 8 4, 12 12 T 20 4" stroke-linecap="round"/>
+                            <circle cx="4" cy="20" r="2" fill="currentColor"/>
+                            <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                            <circle cx="20" cy="4" r="2" fill="currentColor"/>
+                        </svg>
+                        <span>Interpolated Curve</span>
+                    </button>
+
+                    <div class="divider"></div>
+
+                    <button class="tool-btn" data-tool="circle" title="Circle">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="8"/>
+                        </svg>
+                        <span>Circle</span>
+                    </button>
+                    
+                    <button class="tool-btn" data-tool="rectangle" title="Rectangle">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="4" y="6" width="16" height="12" rx="2"/>
+                        </svg>
+                        <span>Rectangle</span>
+                    </button>
+                    
+                    <button class="tool-btn" data-tool="triangle" title="Triangle">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 4 L20 20 L4 20 Z"/>
+                        </svg>
+                        <span>Triangle</span>
+                    </button>
+                    
+                    <button class="tool-btn" data-tool="star" title="Star">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2 L15 9 L22 10 L17 15 L18 22 L12 18 L6 22 L7 15 L2 10 L9 9 Z"/>
+                        </svg>
+                        <span>Star</span>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Canvas Area -->
+            <div class="canvas-container">
+                <canvas id="drawingCanvas"></canvas>
+                <div id="statusBar" class="status-bar">
+                    <span id="toolStatus">Straight Line Tool</span>
+                    <span id="coordinateStatus">X: 0, Y: 0</span>
+                </div>
+            </div>
+
+            <!-- Settings Panel -->
+            <aside class="settings-panel">
+                <h2 class="settings-title">Settings</h2>
+                
+                <div class="setting-group">
+                    <label for="strokeWidth">Stroke Width</label>
+                    <div class="slider-container">
+                        <input type="range" id="strokeWidth" min="1" max="10" value="2" step="0.5">
+                        <span id="strokeWidthValue">2</span>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label for="strokeColor">Stroke Color</label>
+                    <input type="color" id="strokeColor" value="#6366f1">
+                </div>
+
+                <div class="setting-group" id="curveSettings" style="display: none;">
+                    <label for="curveRadius">Curve Influence Radius</label>
+                    <div class="slider-container">
+                        <input type="range" id="curveRadius" min="10" max="200" value="50" step="5">
+                        <span id="curveRadiusValue">50</span>
+                    </div>
+                    <p class="setting-hint">Controls how smooth the curve is around control points</p>
+                </div>
+
+                <div class="setting-group" id="curveTension" style="display: none;">
+                    <label for="tension">Curve Tension</label>
+                    <div class="slider-container">
+                        <input type="range" id="tension" min="0" max="1" value="0.5" step="0.1">
+                        <span id="tensionValue">0.5</span>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label for="pointSize">Point Size</label>
+                    <div class="slider-container">
+                        <input type="range" id="pointSize" min="3" max="12" value="6" step="1">
+                        <span id="pointSizeValue">6</span>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label for="snapDistance">Snap Distance</label>
+                    <div class="slider-container">
+                        <input type="range" id="snapDistance" min="5" max="50" value="20" step="5">
+                        <span id="snapDistanceValue">20</span>
+                    </div>
+                    <p class="setting-hint">Distance to snap to existing points</p>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>
